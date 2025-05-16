@@ -16,3 +16,18 @@ def test_get_users_list():
     assert "data" in json_data
     assert isinstance(json_data["data"], list)
     assert all("email" in user for user in json_data["data"])
+
+def test_create_user():
+    """
+    Test the POST /users endpoint creates a new user.
+    """
+    payload = {
+        "name": "Joseph Cole",
+        "job": "QA Engineer"
+    }
+    response = requests.post(f"{BASE_URL}/users", json=payload)
+    assert response.status_code == 201
+
+    json_data = response.json()
+    assert json_data["name"] == payload["name"]
+    assert json_data["job"] == payload["job"]
