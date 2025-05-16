@@ -1,5 +1,3 @@
-# tests/test_users.py
-
 import requests
 
 # Base URL for the API
