@@ -31,3 +31,10 @@ def test_create_user():
     json_data = response.json()
     assert json_data["name"] == payload["name"]
     assert json_data["job"] == payload["job"]
+
+def test_user_not_found():
+    """
+    Test GET /users/{id} for a non-existing user returns 404.
+    """
+    response = requests.get(f"{BASE_URL}/users/99999")
+    assert response.status_code == 404
