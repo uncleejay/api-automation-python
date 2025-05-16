@@ -1,4 +1,4 @@
-# API QA Automation with Python
+# API Automation with Python
 
 Hey there! 👋
 
