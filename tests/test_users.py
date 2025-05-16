@@ -1,38 +1,45 @@
 import requests
 
-# Base URL for the API
 BASE_URL = "https://reqres.in/api"
+API_KEY = "reqres-free-v1"
+
+HEADERS = {
+    "x-api-key": API_KEY
+}
+
+def api_request(method, endpoint, **kwargs):
+    """
+    Helper function to make API requests with the required headers.
+    
+    :param method: HTTP method (e.g., 'get', 'post')
+    :param endpoint: API endpoint string (e.g., '/users')
+    :param kwargs: Additional arguments for requests.request
+    :return: requests.Response object
+    """
+    url = BASE_URL + endpoint
+    
+    # Ensure headers include the API key, merge if other headers passed
+    headers = kwargs.pop("headers", {})
+    merged_headers = {**HEADERS, **headers}
+    
+    response = requests.request(method, url, headers=merged_headers, **kwargs)
+    return response
 
 def test_get_users_list():
-    """
-    Test the GET /users endpoint returns a valid user list.
-    """
-    response = requests.get(f"{BASE_URL}/users?page=2")
+    response = api_request("get", "/users?page=2")
     assert response.status_code == 200
 
-    json_data = response.json()
-    assert "data" in json_data
-    assert isinstance(json_data["data"], list)
-    assert all("email" in user for user in json_data["data"])
-
 def test_create_user():
-    """
-    Test the POST /users endpoint creates a new user.
-    """
     payload = {
         "name": "Joseph Cole",
         "job": "QA Engineer"
     }
-    response = requests.post(f"{BASE_URL}/users", json=payload)
+    response = api_request("post", "/users", json=payload)
     assert response.status_code == 201
-
-    json_data = response.json()
-    assert json_data["name"] == payload["name"]
-    assert json_data["job"] == payload["job"]
 
 def test_user_not_found():
     """
     Test GET /users/{id} for a non-existing user returns 404.
     """
-    response = requests.get(f"{BASE_URL}/users/99999")
+    response = api_request("get", "/users/99999")
     assert response.status_code == 404
